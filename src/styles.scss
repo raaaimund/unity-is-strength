@@ -8,9 +8,11 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.plant-bottom-sheet {
-  margin-bottom: .5rem !important;
+.cdk-overlay-container {
+  z-index: 90001;
+}
 
+.plant-bottom-sheet {
   .mat-bottom-sheet-container {
     padding: 0;
   }

@@ -1,33 +1,19 @@
 <form [formGroup]="this.form">
   <mat-card>
     <mat-card-header class="mb-1">
-      <mat-card-title>{{ getSpeciesDisplayText(this.form.controls.selectedPlantSpecies.value) }}</mat-card-title>
+      <mat-card-title>{{ this.form.controls.selectedPlantSpecies.value.name }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-form-field class="w-full">
-        <input type="text"
-               placeholder="Latitude"
-               aria-label="Latitude"
-               matInput
-               [disabled]="true"
-               [value]="this.form.controls.selectedPlantLocation.value.lat">
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <input type="text"
-               placeholder="Longitude"
-               aria-label="Longitude"
-               matInput
-               [disabled]="true"
-               [value]="this.form.controls.selectedPlantLocation.value.lng">
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <mat-label>Plant species</mat-label>
-        <mat-select formControlName="selectedPlantSpecies" [compareWith]="isPlantSelected">
-          @for (species of _species$$ | async; track species) {
-            <mat-option [value]="species">{{ getSpeciesDisplayText(species) }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <mat-chip-listbox aria-label="Plant values" class="mb-1">
+        <mat-chip-option [selectable]="false">
+          <mat-icon matChipAvatar>location_on</mat-icon>
+          {{ this.form.controls.selectedPlantLocation.value.lat }}
+          {{ this.form.controls.selectedPlantLocation.value.lng }}
+        </mat-chip-option>
+        <mat-chip-option *ngFor="let commonName of this.form.controls.selectedPlantSpecies.value.commonNames"
+                         [selectable]="false">{{ commonName }}
+        </mat-chip-option>
+      </mat-chip-listbox>
       <mat-divider></mat-divider>
     </mat-card-content>
     <mat-card-actions>

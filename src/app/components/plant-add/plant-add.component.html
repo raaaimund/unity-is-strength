@@ -13,22 +13,6 @@
         </span>
       </p>
       <mat-form-field class="w-full">
-        <input type="text"
-               placeholder="Latitude"
-               aria-label="Latitude"
-               matInput
-               [disabled]="true"
-               [value]="this.form.controls.selectedPlantLocation.value?.lat">
-      </mat-form-field>
-      <mat-form-field class="w-full">
-        <input type="text"
-               placeholder="Longitude"
-               aria-label="Longitude"
-               matInput
-               [disabled]="true"
-               [value]="this.form.controls.selectedPlantLocation.value?.lng">
-      </mat-form-field>
-      <mat-form-field class="w-full">
         <mat-label>Plant species</mat-label>
         <mat-select [formControl]="this.form.controls.selectedPlantSpecies">
           @for (species of _species$$ | async; track species) {

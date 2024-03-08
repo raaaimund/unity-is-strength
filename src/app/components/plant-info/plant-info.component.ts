@@ -3,20 +3,18 @@ import {Plant, PlantLocation, PlantSpecies} from "../../models/plant";
 import {MatCardModule} from "@angular/material/card";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatButtonModule} from "@angular/material/button";
-import {MatSelectModule} from "@angular/material/select";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
 import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetModule, MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {MatIconModule} from "@angular/material/icon";
 import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgFor} from "@angular/common";
 import {MapService} from "../../service/map.service";
 import {PlantSpeciesGatewayService} from "../../gateway/plant-species-gateway.service";
+import {MatChipsModule} from "@angular/material/chips";
 
 @Component({
   selector: 'app-plant-info',
   standalone: true,
-  imports: [MatCardModule, MatDividerModule, MatButtonModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatBottomSheetModule, MatIconModule, ReactiveFormsModule, AsyncPipe, NgIf],
+  imports: [MatCardModule, MatDividerModule, MatButtonModule, MatBottomSheetModule, MatIconModule, MatChipsModule, ReactiveFormsModule, AsyncPipe, NgFor],
   templateUrl: './plant-info.component.html',
   styleUrl: './plant-info.component.scss'
 })
