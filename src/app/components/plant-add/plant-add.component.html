@@ -29,17 +29,12 @@
                [value]="this.form.controls.selectedPlantLocation.value?.lng">
       </mat-form-field>
       <mat-form-field class="w-full">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getSpeciesAutocompleteDisplayText">
+        <mat-label>Plant species</mat-label>
+        <mat-select [formControl]="this.form.controls.selectedPlantSpecies">
           @for (species of _species$$ | async; track species) {
             <mat-option [value]="species">{{ getSpeciesAutocompleteDisplayText(species) }}</mat-option>
           }
-        </mat-autocomplete>
-        <input type="text"
-               placeholder="Select species"
-               aria-label="Plant Species"
-               matInput
-               [formControl]="this.form.controls.selectedPlantSpecies"
-               [matAutocomplete]="auto">
+        </mat-select>
         <mat-error>
           Please select a species.
         </mat-error>

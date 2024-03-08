@@ -8,7 +8,7 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.add-plant-bottom-sheet {
+.plant-bottom-sheet {
   margin-bottom: .5rem !important;
 
   .mat-bottom-sheet-container {
@@ -16,3 +16,10 @@ body {
   }
 }
 
+.w-full {
+  width: 100%;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}

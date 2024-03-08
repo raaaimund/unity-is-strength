@@ -30,6 +30,54 @@ export class PlantsGatewayService {
         name: 'Syzgium Malaccense',
         commonNames: ['Jamaican Apple']
       }
+    },
+    {
+      id: 3,
+      location: {
+        lat: 31.9539,
+        lng: 35.9106
+      },
+      species: {
+        id: 2,
+        name: 'Syzgium Malaccense',
+        commonNames: ['Jamaican Apple']
+      }
+    },
+    {
+      id: 4,
+      location: {
+        lat: 31.9539,
+        lng: 35.9106
+      },
+      species: {
+        id: 2,
+        name: 'Syzgium Malaccense',
+        commonNames: ['Jamaican Apple']
+      }
+    },
+    {
+      id: 5,
+      location: {
+        lat: 31.9539,
+        lng: 35.9106
+      },
+      species: {
+        id: 2,
+        name: 'Syzgium Malaccense',
+        commonNames: ['Jamaican Apple']
+      }
+    },
+    {
+      id: 6,
+      location: {
+        lat: 31.9539,
+        lng: 35.9106
+      },
+      species: {
+        id: 2,
+        name: 'Syzgium Malaccense',
+        commonNames: ['Jamaican Apple']
+      }
     }
   ];
   private readonly _plants$$ = new BehaviorSubject<Plant[]>(this._plants);
