@@ -1,0 +1,54 @@
+<form [formGroup]="this.form" (ngSubmit)="onAddClicked()">
+  <mat-card>
+    <mat-card-header class="mb-1">
+      <mat-card-title>Add new plant</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        <mat-error *ngIf="this.form.controls.selectedPlantLocation.value === null">
+          Use the map to set the planting location.
+        </mat-error>
+        <span *ngIf="this.form.controls.selectedPlantLocation.value">
+          Use the map to change the planting location.
+        </span>
+      </p>
+      <mat-form-field class="w-full">
+        <input type="text"
+               placeholder="Latitude"
+               aria-label="Latitude"
+               matInput
+               [disabled]="true"
+               [value]="this.form.controls.selectedPlantLocation.value?.lat">
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <input type="text"
+               placeholder="Longitude"
+               aria-label="Longitude"
+               matInput
+               [disabled]="true"
+               [value]="this.form.controls.selectedPlantLocation.value?.lng">
+      </mat-form-field>
+      <mat-form-field class="w-full">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="getSpeciesAutocompleteDisplayText">
+          @for (species of _species$$ | async; track species) {
+            <mat-option [value]="species">{{ getSpeciesAutocompleteDisplayText(species) }}</mat-option>
+          }
+        </mat-autocomplete>
+        <input type="text"
+               placeholder="Select species"
+               aria-label="Plant Species"
+               matInput
+               [formControl]="this.form.controls.selectedPlantSpecies"
+               [matAutocomplete]="auto">
+        <mat-error>
+          Please select a species.
+        </mat-error>
+      </mat-form-field>
+      <mat-divider></mat-divider>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="primary" type="submit" [disabled]="this.form.invalid">Add</button>
+      <button mat-button type="button" (click)="onCloseClicked()">Close</button>
+    </mat-card-actions>
+  </mat-card>
+</form>
