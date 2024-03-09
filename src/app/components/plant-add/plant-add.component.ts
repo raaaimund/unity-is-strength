@@ -6,9 +6,9 @@ import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {MapService} from "../../services/map.service";
 import {take} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {UisMoveDirective, UisMoveEndedEvent} from "../../directives/uis-move.directive";
+import {UisTouchMoveDirective, UisTouchMoveEndedEvent} from "../../directives/uis-touch-move.directive";
 
-export interface AddPlantResult {
+export interface AddPlantBottomSheetResult {
   location: PlantLocation;
   species: PlantSpecies;
 }
@@ -18,8 +18,8 @@ export interface AddPlantResult {
   templateUrl: './plant-add.component.html',
   styleUrl: './plant-add.component.scss',
   hostDirectives: [{
-    directive: UisMoveDirective,
-    outputs: ['uisMoveEnded']
+    directive: UisTouchMoveDirective,
+    outputs: ['uisTouchMoveEnded']
   }]
 })
 export class PlantAddComponent {
@@ -34,7 +34,7 @@ export class PlantAddComponent {
     private readonly bottomSheetRef: MatBottomSheetRef<PlantAddComponent>,
     private readonly plantSpeciesService: PlantSpeciesGatewayService,
     private readonly mapService: MapService,
-    private readonly uisPanDownDirective: UisMoveDirective
+    private readonly uisPanDownDirective: UisTouchMoveDirective
   ) {
     this.mapService.selectedLocation.pipe(takeUntilDestroyed()).subscribe(location => {
       this.form.controls.selectedPlantLocation.setValue(location);
@@ -44,7 +44,7 @@ export class PlantAddComponent {
       this.form.controls.selectedPlantLocation.setValue(location);
       this.mapService.addTemporaryPlantMarker(location);
     });
-    this.uisPanDownDirective.uisMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
+    this.uisPanDownDirective.uisTouchMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onTouchMoveEnded);
   }
 
   public getSpeciesAutocompleteDisplayText(species: PlantSpecies | null): string {
@@ -61,10 +61,11 @@ export class PlantAddComponent {
     this.bottomSheetRef.dismiss({
       location: this.form.controls.selectedPlantLocation.value,
       species: this.form.controls.selectedPlantSpecies.value
-    } as AddPlantResult)
+    } as AddPlantBottomSheetResult)
   }
 
-  private onPanEnded = ($event: UisMoveEndedEvent): void => {
+  private onTouchMoveEnded = ($event: UisTouchMoveEndedEvent): void => {
+    console.log($event)
     const panEndY = $event.y;
     const windowHeight = window.innerHeight;
     if (panEndY > windowHeight - 40) {

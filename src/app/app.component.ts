@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
-import {PlantAddComponent, AddPlantResult} from "./components/plant-add/plant-add.component";
+import {PlantAddComponent, AddPlantBottomSheetResult} from "./components/plant-add/plant-add.component";
 import {PlantsGatewayService} from "./gateway/plants-gateway.service";
 import {Plant} from "./models/plant";
 import {PlantListComponent} from "./components/plant-list/plant-list.component";
@@ -21,7 +21,7 @@ export class AppComponent {
       panelClass: 'plant-bottom-sheet',
     })
       .afterDismissed()
-      .subscribe((result?: AddPlantResult) => {
+      .subscribe((result?: AddPlantBottomSheetResult) => {
         if (result) {
           const newPlant: Plant = {
             id: 0,

@@ -6,15 +6,15 @@ import {MatPaginator} from "@angular/material/paginator";
 import {Plant} from "../../models/plant";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MapService} from "../../services/map.service";
-import {UisMoveDirective, UisMoveEndedEvent} from "../../directives/uis-move.directive";
+import {UisTouchMoveDirective, UisTouchMoveEndedEvent} from "../../directives/uis-touch-move.directive";
 
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
   styleUrl: './plant-list.component.scss',
   hostDirectives: [{
-    directive: UisMoveDirective,
-    outputs: ['uisMoveEnded']
+    directive: UisTouchMoveDirective,
+    outputs: ['uisTouchMoveEnded']
   }]
 })
 export class PlantListComponent implements AfterViewInit {
@@ -27,12 +27,12 @@ export class PlantListComponent implements AfterViewInit {
     private readonly plantsService: PlantsGatewayService,
     private readonly bottomSheetRef: MatBottomSheetRef<PlantListComponent>,
     private readonly mapService: MapService,
-    private readonly uisPanDownDirective: UisMoveDirective
+    private readonly uisPanDownDirective: UisTouchMoveDirective
   ) {
     this.plantsService.getPlants().pipe(takeUntilDestroyed()).subscribe(plants => {
       this.dataSource = new MatTableDataSource<Plant>(plants);
     });
-    this.uisPanDownDirective.uisMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
+    this.uisPanDownDirective.uisTouchMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onTouchMoveEnded);
   }
 
   ngAfterViewInit() {
@@ -47,7 +47,7 @@ export class PlantListComponent implements AfterViewInit {
     this.mapService.zoomToLocation(plant.location, 18);
   }
 
-  private onPanEnded = ($event: UisMoveEndedEvent): void => {
+  private onTouchMoveEnded = ($event: UisTouchMoveEndedEvent): void => {
     const panEndY = $event.y;
     const windowHeight = window.innerHeight;
     if (panEndY > windowHeight - 40) {
