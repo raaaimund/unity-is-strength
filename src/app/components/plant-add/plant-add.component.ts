@@ -6,7 +6,7 @@ import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
 import {MapService} from "../../services/map.service";
 import {take} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {UisPanDirective, UisPanEndedEvent} from "../../directives/uis-pan.directive";
+import {UisMoveDirective, UisMoveEndedEvent} from "../../directives/uis-move.directive";
 
 export interface AddPlantResult {
   location: PlantLocation;
@@ -18,8 +18,8 @@ export interface AddPlantResult {
   templateUrl: './plant-add.component.html',
   styleUrl: './plant-add.component.scss',
   hostDirectives: [{
-    directive: UisPanDirective,
-    outputs: ['uisPanEnded']
+    directive: UisMoveDirective,
+    outputs: ['uisMoveEnded']
   }]
 })
 export class PlantAddComponent {
@@ -34,7 +34,7 @@ export class PlantAddComponent {
     private readonly bottomSheetRef: MatBottomSheetRef<PlantAddComponent>,
     private readonly plantSpeciesService: PlantSpeciesGatewayService,
     private readonly mapService: MapService,
-    private readonly uisPanDownDirective: UisPanDirective
+    private readonly uisPanDownDirective: UisMoveDirective
   ) {
     this.mapService.selectedLocation.pipe(takeUntilDestroyed()).subscribe(location => {
       this.form.controls.selectedPlantLocation.setValue(location);
@@ -44,7 +44,7 @@ export class PlantAddComponent {
       this.form.controls.selectedPlantLocation.setValue(location);
       this.mapService.addTemporaryPlantMarker(location);
     });
-    this.uisPanDownDirective.uisPanEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
+    this.uisPanDownDirective.uisMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
   }
 
   public getSpeciesAutocompleteDisplayText(species: PlantSpecies | null): string {
@@ -64,8 +64,8 @@ export class PlantAddComponent {
     } as AddPlantResult)
   }
 
-  private onPanEnded = ($event: UisPanEndedEvent): void => {
-    const panEndY = $event.panValues.center.y;
+  private onPanEnded = ($event: UisMoveEndedEvent): void => {
+    const panEndY = $event.y;
     const windowHeight = window.innerHeight;
     if (panEndY > windowHeight - 40) {
       this.onCloseClicked();

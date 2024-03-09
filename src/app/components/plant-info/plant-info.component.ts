@@ -4,7 +4,7 @@ import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom
 import {FormBuilder} from "@angular/forms";
 import {MapService} from "../../services/map.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {UisPanDirective, UisPanEndedEvent} from "../../directives/uis-pan.directive";
+import {UisMoveDirective, UisMoveEndedEvent} from "../../directives/uis-move.directive";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
@@ -12,8 +12,8 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
   templateUrl: './plant-info.component.html',
   styleUrl: './plant-info.component.scss',
   hostDirectives: [{
-    directive: UisPanDirective,
-    outputs: ['uisPanEnded']
+    directive: UisMoveDirective,
+    outputs: ['uisMoveEnded']
   }]
 })
 export class PlantInfoComponent {
@@ -38,10 +38,10 @@ export class PlantInfoComponent {
     private readonly bottomSheetRef: MatBottomSheetRef<PlantInfoComponent>,
     private readonly mapService: MapService,
     private readonly snackBar: MatSnackBar,
-    private readonly uisPanDownDirective: UisPanDirective
+    private readonly uisPanDownDirective: UisMoveDirective
   ) {
     this.mapService.zoomToLocation(plantToEdit.location, 18);
-    this.uisPanDownDirective.uisPanEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
+    this.uisPanDownDirective.uisMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
   }
 
   public onCloseClicked(): void {
@@ -60,8 +60,8 @@ export class PlantInfoComponent {
     });
   }
 
-  private onPanEnded = ($event: UisPanEndedEvent): void => {
-    const panEndY = $event.panValues.center.y;
+  private onPanEnded = ($event: UisMoveEndedEvent): void => {
+    const panEndY = $event.y;
     const windowHeight = window.innerHeight;
     if (panEndY > windowHeight - 40) {
       this.onCloseClicked();

@@ -1,5 +1,5 @@
-import {BrowserModule, HAMMER_GESTURE_CONFIG, HammerGestureConfig, HammerModule} from '@angular/platform-browser';
-import {Injectable, NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
 import {AppComponent} from "./app.component";
 import {provideRouter, RouterOutlet} from "@angular/router";
 import {MapComponent} from "./components/map/map.component";
@@ -32,13 +32,6 @@ import {provideAnimationsAsync} from "@angular/platform-browser/animations/async
 import {ClipboardModule} from "@angular/cdk/clipboard";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 
-@Injectable({providedIn: 'root'})
-export class UisHammerConfig extends HammerGestureConfig {
-  override overrides = <any>{
-    pan: {direction: Hammer.DIRECTION_ALL},
-  };
-}
-
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
@@ -55,7 +48,6 @@ export class UisHammerConfig extends HammerGestureConfig {
     NgIf,
     NgFor,
     JsonPipe,
-    HammerModule,
     ClipboardModule,
     MatSnackBarModule,
     MatButtonModule,
@@ -77,16 +69,11 @@ export class UisHammerConfig extends HammerGestureConfig {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideAnimationsAsync(),
-    UisHammerConfig,
 
     PlantsGatewayService,
     PlantSpeciesGatewayService,
     MapService,
     RouterOutlet,
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: UisHammerConfig,
-    },
   ]
 })
 export class AppModule {
