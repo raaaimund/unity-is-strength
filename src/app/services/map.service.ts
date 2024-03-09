@@ -123,8 +123,17 @@ export class MapService {
     this.map.setView([location.lat, location.lng], zoomLevel);
   }
 
+  // https://developers.google.com/fonts/docs/material_icons#using_the_icons_in_html
   private toMarker(location: PlantLocation, properties: PlantMarkerFeatureProperties): L.Marker<PlantMarkerFeatureProperties> {
-    const marker = new L.Marker<PlantMarkerFeatureProperties>([location.lat, location.lng]);
+    const color = properties.isTemporaryForAddOrEditPlant ? 'purple' : 'indigo';
+    const marker = new L.Marker<PlantMarkerFeatureProperties>([location.lat, location.lng], {
+      icon: L.divIcon({
+        className: 'plant-marker',
+        html: `<span class="material-icons plant-marker-icon ${color}">park</span>`,
+        iconSize: [48, 48],
+        iconAnchor: [24, 48]
+      })
+    });
     marker.feature = {
       type: 'Feature',
       properties: properties,
