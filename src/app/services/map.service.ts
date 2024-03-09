@@ -1,14 +1,10 @@
-import {Observable, Subject} from "rxjs";
+import {Observable, ReplaySubject, Subject} from "rxjs";
 import {Injectable} from "@angular/core";
 import * as L from "leaflet";
 import {LeafletMouseEvent} from "leaflet";
 import {Plant, PlantLocation} from "../models/plant";
 import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {PlantInfoComponent} from "../components/plant-info/plant-info.component";
-
-export interface PlantMarkerOptions {
-  isTemporaryForAddOrEditPlant: boolean
-}
 
 export interface PlantMarkerFeatureProperties {
   isTemporaryForAddOrEditPlant: boolean
@@ -19,19 +15,36 @@ export interface PlantMarkerFeatureProperties {
   providedIn: 'root'
 })
 export class MapService {
-  private readonly baseMapURl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  private readonly _baseMapURl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   private readonly _selectedLocation$$: Subject<PlantLocation> = new Subject<PlantLocation>();
 
   private _plantMarkers: L.Marker<PlantMarkerFeatureProperties>[] = [];
   private _map: L.Map | null = null;
+  private _currentLocation$$: ReplaySubject<PlantLocation> = new ReplaySubject<PlantLocation>(1);
 
   constructor(private readonly bottomSheet: MatBottomSheet) {
     L.Icon.Default.imagePath = 'assets/images/leaflet/';
   }
 
-  set map(map: L.Map) {
-    this._map = map.on('click', this.onMapClicked.bind(this));
-    L.tileLayer(this.baseMapURl).addTo(this._map);
+  set map(mapElementName: string) {
+    this._map = L.map(mapElementName, {
+      attributionControl: true,
+    }).on('click', this.onMapClicked.bind(this))
+      .on('locationfound', this.onLocationFound.bind(this))
+      .setView([0, 0], 3);
+    L.tileLayer(this._baseMapURl, {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap',
+    }).addTo(this._map);
+    const locator = L.control.locate({
+      setView: 'once',
+      locateOptions: {
+        maxZoom: 18,
+        watch: false
+      }
+    }).addTo(this._map);
+    locator.start();
+    this._map.locate({setView: true, maxZoom: 18});
   }
 
   get map(): L.Map {
@@ -39,19 +52,30 @@ export class MapService {
     return this._map;
   }
 
-  get selectedLocation$(): Observable<PlantLocation> {
+  get selectedLocation(): Observable<PlantLocation> {
     return this._selectedLocation$$.asObservable();
   }
 
-  set selectedLocation$(location: PlantLocation) {
+  set selectedLocation(location: PlantLocation) {
     this._selectedLocation$$.next(location);
   }
 
+  get currentLocation(): Observable<PlantLocation> {
+    return this._currentLocation$$.asObservable();
+  }
+
   public onMapClicked(event: LeafletMouseEvent) {
-    this.selectedLocation$ = {
+    this.selectedLocation = {
       lat: event.latlng.lat,
       lng: event.latlng.lng
     };
+  }
+
+  public onLocationFound(event: L.LocationEvent) {
+    this._currentLocation$$.next({
+      lat: event.latlng.lat,
+      lng: event.latlng.lng
+    });
   }
 
   public addPlantMarkers(plants: Plant[]) {
@@ -88,9 +112,11 @@ export class MapService {
     this._plantMarkers = this._plantMarkers.filter(marker => !marker.feature?.properties.isTemporaryForAddOrEditPlant);
   }
 
-  public centerMap(plants: Plant[]) {
-    const bounds = L.latLngBounds(plants.map(plant => L.latLng(plant.location.lat, plant.location.lng)));
-    this.map.fitBounds(bounds);
+  public centerMapToAllMarkers(): void {
+    if (this._plantMarkers.length) {
+      const bounds = L.latLngBounds(this._plantMarkers.map(marker => marker.getLatLng()));
+      this.map.fitBounds(bounds);
+    }
   }
 
   public zoomToLocation(location: PlantLocation, zoomLevel: number) {

@@ -3,7 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [
+      "hammerjs",
+      "leaflet.locatecontrol"
+    ]
   },
   "files": [
     "src/main.ts"

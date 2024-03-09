@@ -1,25 +1,22 @@
 import {Component, Inject} from '@angular/core';
 import {Plant, PlantLocation, PlantSpecies} from "../../models/plant";
-import {MatCardModule} from "@angular/material/card";
-import {MatDividerModule} from "@angular/material/divider";
-import {MatButtonModule} from "@angular/material/button";
-import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetModule, MatBottomSheetRef} from "@angular/material/bottom-sheet";
-import {MatIconModule} from "@angular/material/icon";
-import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
-import {AsyncPipe, NgFor} from "@angular/common";
-import {MapService} from "../../service/map.service";
-import {PlantSpeciesGatewayService} from "../../gateway/plant-species-gateway.service";
-import {MatChipsModule} from "@angular/material/chips";
+import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from "@angular/material/bottom-sheet";
+import {FormBuilder} from "@angular/forms";
+import {MapService} from "../../services/map.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {UisPanDirective, UisPanEndedEvent} from "../../directives/uis-pan.directive";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-plant-info',
-  standalone: true,
-  imports: [MatCardModule, MatDividerModule, MatButtonModule, MatBottomSheetModule, MatIconModule, MatChipsModule, ReactiveFormsModule, AsyncPipe, NgFor],
   templateUrl: './plant-info.component.html',
-  styleUrl: './plant-info.component.scss'
+  styleUrl: './plant-info.component.scss',
+  hostDirectives: [{
+    directive: UisPanDirective,
+    outputs: ['uisPanEnded']
+  }]
 })
 export class PlantInfoComponent {
-  readonly _species$$ = this.plantSpeciesService.getSpecies();
   readonly form = this.formBuilder.group({
     selectedPlantLocation: this.formBuilder.control<PlantLocation>({
       value: this.plantToEdit.location,
@@ -40,18 +37,37 @@ export class PlantInfoComponent {
     private formBuilder: FormBuilder,
     private readonly bottomSheetRef: MatBottomSheetRef<PlantInfoComponent>,
     private readonly mapService: MapService,
-    private readonly plantSpeciesService: PlantSpeciesGatewayService
+    private readonly snackBar: MatSnackBar,
+    private readonly uisPanDownDirective: UisPanDirective
   ) {
     this.mapService.zoomToLocation(plantToEdit.location, 18);
+    this.uisPanDownDirective.uisPanEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
   }
 
   public onCloseClicked(): void {
     this.bottomSheetRef.dismiss();
   }
 
-  public getSpeciesDisplayText(species: PlantSpecies | null): string {
-    return species ? `${species.name} (${species.commonNames.join(', ')})` : '';
+  public getLocationDisplayText(): string {
+    return `${this.plantToEdit.location.lat}, ${this.plantToEdit.location.lng}`;
   }
 
-  public isPlantSelected = (p1: Plant, p2: Plant): boolean => (p1 && p2 ? p1.id === p2.id : p1 === p2)
+  public onCopied(wasCopied: boolean): void {
+    if (wasCopied) this.snackBar.open('Copied to clipboard.', 'Thanks', {
+      duration: 1500,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
+  private onPanEnded = ($event: UisPanEndedEvent): void => {
+    const panEndY = $event.panValues.center.y;
+    const windowHeight = window.innerHeight;
+    if (panEndY > windowHeight - 40) {
+      this.onCloseClicked();
+    } else {
+      $event.container.style.position = '';
+      $event.container.style.top = '';
+    }
+  }
 }

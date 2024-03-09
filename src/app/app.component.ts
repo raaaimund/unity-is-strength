@@ -1,43 +1,17 @@
-import {Component, Injectable} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {MapComponent} from "./components/map/map.component";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {
-  EcoFabSpeedDialActionsComponent,
-  EcoFabSpeedDialComponent,
-  EcoFabSpeedDialTriggerComponent
-} from "@ecodev/fab-speed-dial";
-import {MatBottomSheet, MatBottomSheetModule} from "@angular/material/bottom-sheet";
+import {Component} from '@angular/core';
+import {MatBottomSheet} from "@angular/material/bottom-sheet";
 import {PlantAddComponent, AddPlantResult} from "./components/plant-add/plant-add.component";
 import {PlantsGatewayService} from "./gateway/plants-gateway.service";
-import {MapService} from "./service/map.service";
 import {Plant} from "./models/plant";
 import {PlantListComponent} from "./components/plant-list/plant-list.component";
-import {HAMMER_GESTURE_CONFIG, HammerGestureConfig} from "@angular/platform-browser";
-
-@Injectable({providedIn: 'root'})
-export class MyHammerConfig extends HammerGestureConfig {
-  override overrides = <any>{
-    swipe: {direction: Hammer.DIRECTION_ALL},
-  };
-}
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, MapComponent, MatButtonModule, MatIconModule, MatBottomSheetModule, EcoFabSpeedDialComponent, EcoFabSpeedDialTriggerComponent, EcoFabSpeedDialActionsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  providers: [
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: MyHammerConfig,
-    },
-  ],
 })
 export class AppComponent {
-  constructor(private readonly bottomSheet: MatBottomSheet, private readonly plantsGatewayService: PlantsGatewayService, private readonly mapService: MapService) {
+  constructor(private readonly bottomSheet: MatBottomSheet, private readonly plantsGatewayService: PlantsGatewayService) {
   }
 
   public onAddClicked(): void {
@@ -55,7 +29,6 @@ export class AppComponent {
             species: result.species
           };
           this.plantsGatewayService.addPlant(newPlant);
-          this.mapService.addPlantMarker(newPlant);
         }
       });
   }
@@ -70,9 +43,5 @@ export class AppComponent {
       .subscribe(() => {
 
       });
-  }
-
-  onPan($event: any) {
-    console.log($event);
   }
 }

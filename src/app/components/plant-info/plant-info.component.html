@@ -5,12 +5,15 @@
     </mat-card-header>
     <mat-card-content>
       <mat-chip-listbox aria-label="Plant values" class="mb-1">
-        <mat-chip-option [selectable]="false">
+        <mat-chip-option [cdkCopyToClipboard]="getLocationDisplayText()"
+                         (cdkCopyToClipboardCopied)="onCopied($event)"
+                         [selectable]="false">
           <mat-icon matChipAvatar>location_on</mat-icon>
-          {{ this.form.controls.selectedPlantLocation.value.lat }}
-          {{ this.form.controls.selectedPlantLocation.value.lng }}
+          {{ getLocationDisplayText() }}
         </mat-chip-option>
         <mat-chip-option *ngFor="let commonName of this.form.controls.selectedPlantSpecies.value.commonNames"
+                         [cdkCopyToClipboard]="commonName"
+                         (cdkCopyToClipboardCopied)="onCopied($event)"
                          [selectable]="false">{{ commonName }}
         </mat-chip-option>
       </mat-chip-listbox>

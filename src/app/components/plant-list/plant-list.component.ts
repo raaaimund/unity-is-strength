@@ -1,24 +1,21 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {PlantsGatewayService} from "../../gateway/plants-gateway.service";
-import {MatBottomSheetModule, MatBottomSheetRef} from "@angular/material/bottom-sheet";
-import {MatCardModule} from "@angular/material/card";
-import {MatDividerModule} from "@angular/material/divider";
-import {MatButtonModule} from "@angular/material/button";
-import {MatInputModule} from "@angular/material/input";
-import {MatIconModule} from "@angular/material/icon";
-import {AsyncPipe, JsonPipe, NgIf} from "@angular/common";
-import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {MatPaginator, MatPaginatorModule} from "@angular/material/paginator";
+import {MatBottomSheetRef} from "@angular/material/bottom-sheet";
+import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
 import {Plant} from "../../models/plant";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {MapService} from "../../service/map.service";
+import {MapService} from "../../services/map.service";
+import {UisPanDirective, UisPanEndedEvent} from "../../directives/uis-pan.directive";
 
 @Component({
   selector: 'app-plant-list',
-  standalone: true,
-  imports: [MatCardModule, MatDividerModule, MatButtonModule, MatInputModule, MatBottomSheetModule, MatIconModule, MatTableModule, MatPaginatorModule, JsonPipe, AsyncPipe, NgIf],
   templateUrl: './plant-list.component.html',
-  styleUrl: './plant-list.component.scss'
+  styleUrl: './plant-list.component.scss',
+  hostDirectives: [{
+    directive: UisPanDirective,
+    outputs: ['uisPanEnded']
+  }]
 })
 export class PlantListComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -26,11 +23,16 @@ export class PlantListComponent implements AfterViewInit {
   readonly displayedColumns: string[] = ['plant-id', 'plant-name', 'plant-commonNames', 'plant-commands'];
   dataSource: MatTableDataSource<Plant> = new MatTableDataSource<Plant>([]);
 
-  constructor(private readonly plantsService: PlantsGatewayService, private readonly bottomSheetRef: MatBottomSheetRef<PlantListComponent>, private readonly mapService: MapService) {
+  constructor(
+    private readonly plantsService: PlantsGatewayService,
+    private readonly bottomSheetRef: MatBottomSheetRef<PlantListComponent>,
+    private readonly mapService: MapService,
+    private readonly uisPanDownDirective: UisPanDirective
+  ) {
     this.plantsService.getPlants().pipe(takeUntilDestroyed()).subscribe(plants => {
       this.dataSource = new MatTableDataSource<Plant>(plants);
-
     });
+    this.uisPanDownDirective.uisPanEnded.pipe(takeUntilDestroyed()).subscribe(this.onPanEnded);
   }
 
   ngAfterViewInit() {
@@ -43,5 +45,16 @@ export class PlantListComponent implements AfterViewInit {
 
   public onZoomToLocationClicked(plant: Plant): void {
     this.mapService.zoomToLocation(plant.location, 18);
+  }
+
+  private onPanEnded = ($event: UisPanEndedEvent): void => {
+    const panEndY = $event.panValues.center.y;
+    const windowHeight = window.innerHeight;
+    if (panEndY > windowHeight - 40) {
+      this.onCloseClicked();
+    } else {
+      $event.container.style.position = '';
+      $event.container.style.top = '';
+    }
   }
 }
