@@ -1,4 +1,4 @@
-<form [formGroup]="this.form" (ngSubmit)="onAddClicked()">
+<form [formGroup]="this.form" (ngSubmit)="onAddClicked()" (pan)="onPan($event)" (panstart)="onPan($event)" (press)="onPan($event)">
   <mat-card>
     <mat-card-header class="mb-1">
       <mat-card-title>Add new plant</mat-card-title>

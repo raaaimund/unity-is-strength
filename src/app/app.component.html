@@ -1,6 +1,6 @@
 <app-map></app-map>
 
-<eco-fab-speed-dial class="menu">
+<eco-fab-speed-dial class="menu" (panstart)="onPan($event)">
   <eco-fab-speed-dial-trigger [spin]="true">
     <button mat-fab class="spin180">
       <mat-icon fontIcon="menu"></mat-icon>

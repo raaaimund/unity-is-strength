@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Injectable} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {MapComponent} from "./components/map/map.component";
 import {MatButtonModule} from "@angular/material/button";
@@ -14,6 +14,14 @@ import {PlantsGatewayService} from "./gateway/plants-gateway.service";
 import {MapService} from "./service/map.service";
 import {Plant} from "./models/plant";
 import {PlantListComponent} from "./components/plant-list/plant-list.component";
+import {HAMMER_GESTURE_CONFIG, HammerGestureConfig} from "@angular/platform-browser";
+
+@Injectable({providedIn: 'root'})
+export class MyHammerConfig extends HammerGestureConfig {
+  override overrides = <any>{
+    swipe: {direction: Hammer.DIRECTION_ALL},
+  };
+}
 
 @Component({
   selector: 'app-root',
@@ -21,6 +29,12 @@ import {PlantListComponent} from "./components/plant-list/plant-list.component";
   imports: [RouterOutlet, MapComponent, MatButtonModule, MatIconModule, MatBottomSheetModule, EcoFabSpeedDialComponent, EcoFabSpeedDialTriggerComponent, EcoFabSpeedDialActionsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerConfig,
+    },
+  ],
 })
 export class AppComponent {
   constructor(private readonly bottomSheet: MatBottomSheet, private readonly plantsGatewayService: PlantsGatewayService, private readonly mapService: MapService) {
@@ -56,5 +70,9 @@ export class AppComponent {
       .subscribe(() => {
 
       });
+  }
+
+  onPan($event: any) {
+    console.log($event);
   }
 }

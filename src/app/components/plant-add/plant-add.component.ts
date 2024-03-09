@@ -26,7 +26,7 @@ export interface AddPlantResult {
   standalone: true,
   imports: [MatCardModule, MatDividerModule, MatButtonModule, MatSelectModule, MatFormFieldModule, MatInputModule, MatBottomSheetModule, MatIconModule, ReactiveFormsModule, AsyncPipe, NgIf],
   templateUrl: './plant-add.component.html',
-  styleUrl: './plant-add.component.scss'
+  styleUrl: './plant-add.component.scss',
 })
 export class PlantAddComponent {
 
@@ -66,5 +66,9 @@ export class PlantAddComponent {
       location: this.form.controls.selectedPlantLocation.value,
       species: this.form.controls.selectedPlantSpecies.value
     } as AddPlantResult)
+  }
+
+  onPan($event: any) {
+    console.log($event);
   }
 }
