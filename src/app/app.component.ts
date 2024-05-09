@@ -26,7 +26,8 @@ export class AppComponent {
           const newPlant: Plant = {
             id: 0,
             location: result.location,
-            species: result.species
+            species: result.species,
+            created_time: new Date(),
           };
           this.plantsGatewayService.addPlant(newPlant);
         }

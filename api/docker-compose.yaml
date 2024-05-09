@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15.6-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=uis
+      - DB_SCHEMA=uis
+      - DB_ANON_ROLE=uis_anon
+    volumes:
+      # anything in initdb directory is created in the database
+      # see "How to extend this image" section at https://hub.docker.com/r/_/postgres/
+      - "./initdb:/docker-entrypoint-initdb.d"
+
+  api:
+    image: postgrest/postgrest:v12.0.2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - PGRST_DB_URI=postgres://postgres:postgres@db:5432/uis
+      - PGRST_OPENAPI_SERVER_PROXY_URI=http://127.0.0.1:3000
+      - PGRST_DB_SCHEMA=uis
+      - PGRST_DB_ANON_ROLE=uis_anon

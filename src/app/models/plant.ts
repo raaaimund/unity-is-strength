@@ -1,5 +1,6 @@
 export interface Plant {
   id: number;
+  created_time: Date;
   location: PlantLocation;
   species: PlantSpecies;
 }
@@ -7,7 +8,7 @@ export interface Plant {
 export interface PlantSpecies {
   id: number;
   name: string;
-  commonNames: string[];
+  commonnames: string[];
 }
 
 export interface PlantLocation {

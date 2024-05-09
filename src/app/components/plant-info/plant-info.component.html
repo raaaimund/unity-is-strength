@@ -11,7 +11,7 @@
           <mat-icon matChipAvatar>location_on</mat-icon>
           {{ getLocationDisplayText() }}
         </mat-chip-option>
-        <mat-chip-option *ngFor="let commonName of this.form.controls.selectedPlantSpecies.value.commonNames"
+        <mat-chip-option *ngFor="let commonName of this.form.controls.selectedPlantSpecies.value.commonnames"
                          [cdkCopyToClipboard]="commonName"
                          (cdkCopyToClipboardCopied)="onCopied($event)"
                          [selectable]="false">{{ commonName }}

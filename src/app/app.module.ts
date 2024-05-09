@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {AppComponent} from "./app.component";
 import {provideRouter, RouterOutlet} from "@angular/router";
 import {MapComponent} from "./components/map/map.component";
@@ -31,6 +31,8 @@ import {routes} from "./app.routes";
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
 import {ClipboardModule} from "@angular/cdk/clipboard";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {HttpClientModule} from "@angular/common/http";
+import {SnackBarErrorHandler} from "./handler/SnackBarErrorHandler";
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -42,6 +44,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     PlantListComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     ReactiveFormsModule,
     AsyncPipe,
@@ -74,6 +77,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     PlantSpeciesGatewayService,
     MapService,
     RouterOutlet,
+    {provide: ErrorHandler, useClass: SnackBarErrorHandler}
   ]
 })
 export class AppModule {

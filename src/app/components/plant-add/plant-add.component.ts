@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {PlantLocation, PlantSpecies} from "../../models/plant";
 import {PlantSpeciesGatewayService} from "../../gateway/plant-species-gateway.service";
@@ -22,7 +22,7 @@ export interface AddPlantBottomSheetResult {
     outputs: ['uisTouchMoveEnded']
   }]
 })
-export class PlantAddComponent {
+export class PlantAddComponent implements OnDestroy {
   readonly _species$$ = this.plantSpeciesService.getSpecies();
   readonly form = this.formBuilder.group({
     selectedPlantLocation: this.formBuilder.control<PlantLocation | null>(null, [Validators.required]),
@@ -47,8 +47,12 @@ export class PlantAddComponent {
     this.uisPanDownDirective.uisTouchMoveEnded.pipe(takeUntilDestroyed()).subscribe(this.onTouchMoveEnded);
   }
 
+  public ngOnDestroy(): void {
+    this.mapService.removeTemporaryPlantMarkers();
+  }
+
   public getSpeciesAutocompleteDisplayText(species: PlantSpecies | null): string {
-    return species ? `${species.name} (${species.commonNames.join(', ')})` : '';
+    return species ? `${species.name} (${species.commonnames.join(', ')})` : '';
   }
 
   public onCloseClicked(): void {
